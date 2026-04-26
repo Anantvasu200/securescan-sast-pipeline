@@ -1,0 +1,25 @@
+rules:
+  - id: python-eval-injection
+    pattern: eval($USER_INPUT)
+    message: |
+      Eval Injection! eval() on user input = full Python code execution.
+      Attacker can run: eval("__import__('os').system('rm -rf /')")
+      Fix: Never use eval() on user input. Use ast.literal_eval() for safe parsing.
+    languages: [python]
+    severity: ERROR
+    metadata:
+      cwe: CWE-95
+      owasp: A03:2021-Injection
+      author: Anant
+
+  - id: python-exec-injection
+    pattern: exec($USER_INPUT)
+    message: |
+      Code Injection via exec()!
+      Fix: Remove exec() with user input entirely.
+    languages: [python]
+    severity: ERROR
+    metadata:
+      cwe: CWE-95
+      owasp: A03:2021-Injection
+      author: Anant

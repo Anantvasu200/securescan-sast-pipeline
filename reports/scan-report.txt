@@ -1,0 +1,63 @@
+                   
+                   
+┌─────────────────┐
+│ 8 Code Findings │
+└─────────────────┘
+                                                                
+  [36m[22m[24m  /home/ubuntu/securescan/vulnerable-app/app.py[0m
+   ❯❯❱ [1mhardcoded-secret-key[0m
+          [31m[1m[24m❰❰ Blocking ❱❱[0m
+          Hardcoded secret/token found: SECRET_KEY Fix: Move to environment variables.
+                                                                                      
+            9┆ SECRET_KEY = "hardcoded-secret-key-12345"
+   
+   ❯❯❱ [1mhardcoded-aws-access-key[0m
+          [31m[1m[24m❰❰ Blocking ❱❱[0m
+          Hardcoded AWS Access Key found! This will expose your AWS account if pushed to Git. Fix: Use
+          environment variables -> os.environ.get('AWS_ACCESS_KEY')                                   
+                                                                                                      
+           10┆ AWS_ACCESS_KEY = "AKIAIOSFODNN7EXAMPLE"
+   
+   ❯❯❱ [1mpython-sqli-string-concat[0m
+          [31m[1m[24m❰❰ Blocking ❱❱[0m
+          SQL Injection found! Direct string concatenation in DB query. Fix: Use parameterized queries ->
+          db.execute(query, (user_input,))                                                               
+                                                                                                         
+           26┆ query = "SELECT * FROM users WHERE username = '" + username + "'"
+           27┆ result = conn.execute(query).fetchall()
+   
+   ❯❯❱ [1mpython-os-system-injection[0m
+          [31m[1m[24m❰❰ Blocking ❱❱[0m
+          Command Injection via os.system()! Attacker can run any OS command. Fix: Use subprocess with list
+          args -> subprocess.run(["ping", host])                                                           
+                                                                                                           
+           34┆ output = os.system("ping -c 1 " + host)
+   
+   ❯❯❱ [1mpython-subprocess-shell-true[0m
+          [31m[1m[24m❰❰ Blocking ❱❱[0m
+          Command Injection via subprocess shell=True! String + shell=True = dangerous combination. Fix: Use
+          list -> subprocess.run(["nslookup", domain], shell=False)                                         
+                                                                                                            
+           41┆ result = subprocess.run("nslookup " + domain, shell=True, capture_output=True)
+   
+   ❯❯❱ [1mpython-eval-injection[0m
+          [31m[1m[24m❰❰ Blocking ❱❱[0m
+          Eval Injection! eval() on user input = full Python code execution. Attacker can run:
+          eval("__import__('os').system('rm -rf /')") Fix: Never use eval() on user input. Use
+          ast.literal_eval() for safe parsing.                                                
+                                                                                              
+           48┆ result = eval(expr)
+   
+   ❯❯❱ [1mpython-path-traversal-with-open[0m
+          [31m[1m[24m❰❰ Blocking ❱❱[0m
+          Path Traversal via with open()! Fix: Sanitize filename -> os.path.basename(filename)
+                                                                                              
+           55┆ with open("/var/www/" + filename) as f:
+           56┆     return f.read()
+   
+   ❯❯❱ [1mpython-weak-hash-md5[0m
+          [31m[1m[24m❰❰ Blocking ❱❱[0m
+          Weak Cryptography — MD5 is broken! MD5 can be cracked in seconds using rainbow tables. Fix: Use
+          hashlib.sha256() or bcrypt for passwords.                                                      
+                                                                                                         
+           63┆ hashed = hashlib.md5(password.encode()).hexdigest()

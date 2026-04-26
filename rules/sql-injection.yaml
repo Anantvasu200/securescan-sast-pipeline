@@ -1,0 +1,43 @@
+rules:
+  - id: python-sqli-string-concat
+    patterns:
+      - pattern: |
+          $QUERY = $PREFIX + $USERINPUT
+          $DB.execute($QUERY)
+      - pattern-not: |
+          $DB.execute($QUERY, [...])
+    message: |
+      SQL Injection found! Direct string concatenation in DB query.
+      Fix: Use parameterized queries -> db.execute(query, (user_input,))
+    languages: [python]
+    severity: ERROR
+    metadata:
+      cwe: CWE-89
+      owasp: A03:2021-Injection
+      author: Anant
+
+  - id: python-sqli-fstring
+    pattern: |
+      $DB.execute(f"... {$USERINPUT} ...")
+    message: |
+      SQL Injection via f-string! Never use f-strings in DB queries.
+      Fix: Use parameterized queries.
+    languages: [python]
+    severity: ERROR
+    metadata:
+      cwe: CWE-89
+      owasp: A03:2021-Injection
+      author: Anant
+
+  - id: python-sqli-format
+    pattern: |
+      $DB.execute("...".format(...))
+    message: |
+      SQL Injection via .format()! String formatting in DB query is dangerous.
+      Fix: Use parameterized queries.
+    languages: [python]
+    severity: ERROR
+    metadata:
+      cwe: CWE-89
+      owasp: A03:2021-Injection
+      author: Anant

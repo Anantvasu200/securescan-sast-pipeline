@@ -1,0 +1,25 @@
+rules:
+  - id: python-weak-hash-md5
+    pattern: hashlib.md5(...)
+    message: |
+      Weak Cryptography — MD5 is broken!
+      MD5 can be cracked in seconds using rainbow tables.
+      Fix: Use hashlib.sha256() or bcrypt for passwords.
+    languages: [python]
+    severity: ERROR
+    metadata:
+      cwe: CWE-327
+      owasp: A02:2021-Cryptographic-Failures
+      author: Anant
+
+  - id: python-weak-hash-sha1
+    pattern: hashlib.sha1(...)
+    message: |
+      Weak Cryptography — SHA1 is deprecated!
+      Fix: Use hashlib.sha256() minimum, bcrypt for passwords.
+    languages: [python]
+    severity: WARNING
+    metadata:
+      cwe: CWE-327
+      owasp: A02:2021-Cryptographic-Failures
+      author: Anant

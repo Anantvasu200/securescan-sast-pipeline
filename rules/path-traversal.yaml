@@ -1,0 +1,29 @@
+rules:
+  - id: python-path-traversal-open
+    patterns:
+      - pattern: open($PREFIX + $USER_INPUT, ...)
+      - pattern-not: open($SAFE, ...)
+    message: |
+      Path Traversal via open()!
+      Attacker can read /etc/passwd using: "../../../etc/passwd"
+      Fix: Use os.path.basename(filename) to sanitize.
+    languages: [python]
+    severity: ERROR
+    metadata:
+      cwe: CWE-22
+      owasp: A01:2021-Broken-Access-Control
+      author: Anant
+
+  - id: python-path-traversal-with-open
+    pattern: |
+      with open($PREFIX + $USER_INPUT, ...) as $F:
+        ...
+    message: |
+      Path Traversal via with open()!
+      Fix: Sanitize filename -> os.path.basename(filename)
+    languages: [python]
+    severity: ERROR
+    metadata:
+      cwe: CWE-22
+      owasp: A01:2021-Broken-Access-Control
+      author: Anant

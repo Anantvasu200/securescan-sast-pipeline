@@ -1,0 +1,40 @@
+rules:
+  - id: python-os-system-injection
+    pattern: os.system($USER_INPUT)
+    message: |
+      Command Injection via os.system()!
+      Attacker can run any OS command.
+      Fix: Use subprocess with list args -> subprocess.run(["ping", host])
+    languages: [python]
+    severity: ERROR
+    metadata:
+      cwe: CWE-78
+      owasp: A03:2021-Injection
+      author: Anant
+
+  - id: python-subprocess-shell-true
+    patterns:
+      - pattern: subprocess.run($CMD, ..., shell=True, ...)
+      - pattern-not: subprocess.run([...], ..., shell=True, ...)
+    message: |
+      Command Injection via subprocess shell=True!
+      String + shell=True = dangerous combination.
+      Fix: Use list -> subprocess.run(["nslookup", domain], shell=False)
+    languages: [python]
+    severity: ERROR
+    metadata:
+      cwe: CWE-78
+      owasp: A03:2021-Injection
+      author: Anant
+
+  - id: python-os-popen-injection
+    pattern: os.popen($USER_INPUT)
+    message: |
+      Command Injection via os.popen()!
+      Fix: Avoid os.popen with user input entirely.
+    languages: [python]
+    severity: ERROR
+    metadata:
+      cwe: CWE-78
+      owasp: A03:2021-Injection
+      author: Anant
